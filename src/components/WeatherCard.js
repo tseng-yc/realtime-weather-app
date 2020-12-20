@@ -5,6 +5,16 @@ import { ReactComponent as LoadingIcon } from '../weather-app-images/loading.svg
 import { ReactComponent as AirFlowIcon } from '../weather-app-images/airFlow.svg';
 import { ReactComponent as RainIcon } from '../weather-app-images/rain.svg';
 import { ReactComponent as RefreshIcon } from '../weather-app-images/refresh.svg';
+import { ReactComponent as CogIcon } from '../weather-app-images/cog.svg';
+
+const Cog = styled(CogIcon)`
+  position: absolute;
+  top: 30px;
+  right: 15px;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+`;
 
 const WeatherCardWrap = styled.div`
   position: relative;
@@ -104,7 +114,7 @@ const Refresh = styled.div`
 `;
 
 const WeatherCard = (props) => {
-  const { weatherElement, moment, fetchData } = props;
+  const { weatherElement, moment, fetchData, setCurrentPage } = props;
 
   const {
     observationTime,
@@ -119,13 +129,10 @@ const WeatherCard = (props) => {
   } = weatherElement;
   return (
     <WeatherCardWrap>
+      <Cog onClick={() => setCurrentPage('WeatherSetting')} />
       <Location>{locationName}</Location>
       <Description>
-        {new Intl.DateTimeFormat('zh-TW', {
-          hour: 'numeric',
-          minute: 'numeric',
-        }).format(new Date(observationTime))}{' '}
-        {description}
+        {description} {comfortability}
       </Description>
       <CurrentWeather>
         <Temperature>

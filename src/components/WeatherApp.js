@@ -4,6 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 import WeatherCard from './WeatherCard';
 import useWeatherApi from './useWeatherApi';
 import sunriseAndSunsetData from '../sunrise-sunset.json';
+import WeatherSetting from './WeatherSetting';
 
 const getMoment = (locationName) => {
   // 從日出日落時間中找出符合的地區
@@ -73,7 +74,10 @@ const Container = styled.div`
 
 const WeatherApp = () => {
   const [weatherElement, fetchData] = useWeatherApi();
+  const [currentPage, setCurrentPage] = useState('WeatherCard');
+
   const [currentTheme, setCurrentTheme] = useState('light');
+
   const { locationName } = weatherElement;
 
   //現在可以使用 currentLocation 取得地區名稱，因此移除這個多餘的程式碼
@@ -93,11 +97,19 @@ const WeatherApp = () => {
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       <Container>
-        <WeatherCard
-          weatherElement={weatherElement}
-          moment={moment}
-          fetchData={fetchData}
-        />
+        {/* 利用條件渲染的方式決定要呈現哪個組件 */}
+        {currentPage === 'WeatherCard' && (
+          <WeatherCard
+            weatherElement={weatherElement}
+            moment={moment}
+            fetchData={fetchData}
+            setCurrentPage={setCurrentPage}
+          />
+        )}
+
+        {currentPage === 'WeatherSetting' && (
+          <WeatherSetting setCurrentPage={setCurrentPage} />
+        )}
       </Container>
     </ThemeProvider>
   );
