@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const useWeatherApi = () => {
+//讓 useWeatherApi 可以接收參數
+const useWeatherApi = (currentLocation) => {
+  //將傳入的 currentLocation 透過解構賦值取出 locationName 和 cityName
+  const { locationName, cityName } = currentLocation;
   const [weatherElement, setWeatherElement] = useState({
     observationTime: new Date(),
     locationName: '',
@@ -14,11 +17,12 @@ const useWeatherApi = () => {
     isLoading: true,
   });
 
-  const fetchCurrentWeather = () => {
+  //讓 fetchCurrentWeather 可以接收 locationName 作為參數
+  const fetchCurrentWeather = (locationName) => {
     // 加上 return 直接把 fetch API 回傳的 Promise 回傳出去
-
+    //在 API 的網址中可以帶入 locationName 去撈取特定地區的天氣資料
     return fetch(
-      'https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-643031C1-D55B-4B98-9024-F3CA69E95F77&locationName=臺北'
+      `https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-643031C1-D55B-4B98-9024-F3CA69E95F77&locationName=${locationName}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -56,9 +60,10 @@ const useWeatherApi = () => {
       });
   };
 
-  const fetchWeatherForecast = () => {
+  //讓 fetchWeatherForecast 可以接收 cityName 作為參數
+  const fetchWeatherForecast = (cityName) => {
     return fetch(
-      'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-643031C1-D55B-4B98-9024-F3CA69E95F77&locationName=臺北市'
+      `https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-643031C1-D55B-4B98-9024-F3CA69E95F77&locationName=${cityName}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -92,8 +97,10 @@ const useWeatherApi = () => {
   const fetchData = useCallback(() => {
     const fetchingData = async () => {
       const [currentWeather, weatherForecast] = await Promise.all([
-        fetchCurrentWeather(),
-        fetchWeatherForecast(),
+        //locationName 是給「觀測」天氣資料拉取 API 用的地區名稱
+        fetchCurrentWeather(locationName),
+        //cityName 是給「預測」天氣資料拉取 API 用的地區名稱
+        fetchWeatherForecast(cityName),
       ]);
 
       setWeatherElement({
@@ -109,8 +116,10 @@ const useWeatherApi = () => {
     }));
 
     fetchingData();
-  }, []);
 
+    //將 locationName 和 cityName 帶入 useCallback 的 dependencies 中
+  }, [locationName, cityName]);
+  // 說明：一旦 locationName 或 cityName 改變時，fetchData 就會改變，此時 useEffect 內的函式就會再次執行，拉取最新的天氣資料
   useEffect(() => {
     console.log('execute function in useEffect');
     fetchData();

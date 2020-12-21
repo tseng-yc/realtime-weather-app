@@ -114,11 +114,11 @@ const Refresh = styled.div`
 `;
 
 const WeatherCard = (props) => {
-  const { weatherElement, moment, fetchData, setCurrentPage } = props;
+  const { weatherElement, moment, fetchData, setCurrentPage, cityName } = props;
 
   const {
     observationTime,
-    locationName,
+    // locationName,
     temperature,
     windSpeed,
     description,
@@ -130,7 +130,7 @@ const WeatherCard = (props) => {
   return (
     <WeatherCardWrap>
       <Cog onClick={() => setCurrentPage('WeatherSetting')} />
-      <Location>{locationName}</Location>
+      <Location>{cityName}</Location>
       <Description>
         {description} {comfortability}
       </Description>
