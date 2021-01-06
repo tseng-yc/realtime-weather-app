@@ -18,7 +18,7 @@ const getMoment = (locationName) => {
   // 取得當前時間
   const now = new Date();
 
-  // 將當前時間以 "2019-10-08" 的時間格式呈現
+  // 將當前時間以 "西元年-月-日" 的時間格式呈現
   const nowDate = Intl.DateTimeFormat('zh-TW', {
     year: 'numeric',
     month: '2-digit',
