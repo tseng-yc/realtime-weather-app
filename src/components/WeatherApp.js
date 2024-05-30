@@ -1,42 +1,17 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
 import WeatherCard from './WeatherCard';
 import useWeatherApi from './useWeatherApi';
-import sunriseAndSunsetData from '../sunrise-sunset.json';
 import WeatherSetting from './WeatherSetting';
 import { findLocation } from './utils';
 
-const getMoment = (locationName) => {
-  // 從日出日落時間中找出符合的地區
-  const location = sunriseAndSunsetData.find(
-    (data) => data.locationName === locationName
-  );
-  // 找不到的話則回傳 null
-  if (!location) return null;
-
+const getMoment = (weatherElement) => {
   // 取得當前時間
   const now = new Date();
-
-  // 將當前時間以 "西元年-月-日" 的時間格式呈現
-  const nowDate = Intl.DateTimeFormat('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-    .format(now)
-    .replace(/\//g, '-');
-  // 從該地區中找到對應的日期
-  const locationDate =
-    location.time && location.time.find((time) => time.dataTime === nowDate);
-
   // 將日出日落以及當前時間轉成時間戳記（TimeStamp）
-  const sunriseTimestamp = new Date(
-    `${locationDate.dataTime} ${locationDate.sunrise}`
-  ).getTime();
-  const sunsetTimestamp = new Date(
-    `${locationDate.dataTime} ${locationDate.sunset}`
-  ).getTime();
+  const sunriseTimestamp = new Date(weatherElement.sunrise).getTime();
+  const sunsetTimestamp = new Date(weatherElement.sunset).getTime();
   const nowTimeStamp = now.getTime();
 
   // 若當前時間介於日出和日落中間，則表示為白天，否則為晚上
@@ -94,9 +69,7 @@ const WeatherApp = () => {
   //透過 useMemo 避免每次都須重新計算取值，記得帶入 dependencies
   // const moment = useMemo(() => getMoment(locationName), [locationName]);
   //根據日出日落資料的地區名稱，找出對應的日出日落時間
-  const moment = useMemo(() => getMoment(currentLocation.sunriseCityName), [
-    currentLocation.sunriseCityName,
-  ]);
+  const moment = useMemo(() => getMoment(weatherElement), [weatherElement]);
 
   // 根據 moment 決定要使用亮色或暗色主題
   useEffect(() => {
