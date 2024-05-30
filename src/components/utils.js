@@ -44,11 +44,6 @@ export const availableLocations = [
     locationName: '彰師大',
     sunriseCityName: '彰化',
   },
-  // {
-  //   cityName: '嘉義縣',
-  //   locationName: '阿里山',
-  //   sunriseCityName: '嘉義',
-  // },
   {
     cityName: '高雄市',
     locationName: '高雄',
