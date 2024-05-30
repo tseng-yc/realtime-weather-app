@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 
 //讓 useWeatherApi 可以接收參數
 const useWeatherApi = (currentLocation) => {
-  //將傳入的 currentLocation 透過解構賦值取出 locationName 和 cityName
-  const { locationName, cityName } = currentLocation;
+  //將傳入的 currentLocation 透過解構賦值取出 locationName 和 cityName sunriseCityName
+  const { locationName, cityName, sunriseCityName } = currentLocation;
   const [weatherElement, setWeatherElement] = useState({
     observationTime: new Date(),
     locationName: '',
@@ -90,7 +90,7 @@ const useWeatherApi = (currentLocation) => {
       });
   };
 
-  const fetchSunriseSunset = (cityName) => {
+  const fetchSunriseSunset = (sunriseCityName) => {
     // 取得當前時間
     const now = new Date();
     // 將當前時間以 "西元年-月-日" 的時間格式呈現
@@ -102,7 +102,7 @@ const useWeatherApi = (currentLocation) => {
       .format(now)
       .replace(/\//g, '-');
     return fetch(
-      `https://opendata.cwa.gov.tw/api/v1/rest/datastore/A-B0062-001?Authorization=CWA-12808D45-FD59-4025-BF5E-E5D8F486A890&limit=1&CountyName=${cityName}&Date=${nowDate}`
+      `https://opendata.cwa.gov.tw/api/v1/rest/datastore/A-B0062-001?Authorization=CWA-12808D45-FD59-4025-BF5E-E5D8F486A890&limit=1&CountyName=${sunriseCityName}&Date=${nowDate}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -126,7 +126,8 @@ const useWeatherApi = (currentLocation) => {
         fetchCurrentWeather(locationName),
         //cityName 是給「預測」天氣資料拉取 API 用的地區名稱
         fetchWeatherForecast(cityName),
-        fetchSunriseSunset(cityName),
+        //sunriseCityName 是給「日出日落」天氣資料拉取 API 用的地區名稱
+        fetchSunriseSunset(sunriseCityName),
       ]);
 
       setWeatherElement({
@@ -145,8 +146,8 @@ const useWeatherApi = (currentLocation) => {
     fetchingData();
 
     //將 locationName 和 cityName 帶入 useCallback 的 dependencies 中
-  }, [locationName, cityName]);
-  // 說明：一旦 locationName 或 cityName 改變時，fetchData 就會改變，此時 useEffect 內的函式就會再次執行，拉取最新的天氣資料
+  }, [locationName, cityName, sunriseCityName]);
+  // 說明：一旦 locationName sunriseCityName 或 cityName 改變時，fetchData 就會改變，此時 useEffect 內的函式就會再次執行，拉取最新的天氣資料
   useEffect(() => {
     fetchData();
   }, [fetchData]);
